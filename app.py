@@ -3,24 +3,28 @@ from typing import Optional, List
 
 import pymongo.server_api
 from fastapi import FastAPI, Body, HTTPException, status
-from fastapi.responses import Response
 from pydantic import ConfigDict, BaseModel, Field, EmailStr
 from pydantic.functional_validators import BeforeValidator
-from scipy.signal import unique_roots
 
 from typing_extensions import Annotated
 
 from bson import ObjectId
-import asyncio
 from pymongo import AsyncMongoClient
-from pymongo import ReturnDocument
 
 
 app = FastAPI(
     title="Student Course API",
 )
-uri = "mongodb+srv://lukabrosen19_db_user:5u3GoX4ZiJnCvWnM@cluster0.ntxgiau.mongodb.net/"
+uri = os.getenv("MONGODB_URI")
+#uri = "mongodb+srv://lukabrosen19_db_user:5u3GoX4ZiJnCvWnM@cluster0.ntxgiau.mongodb.net/"
 client = AsyncMongoClient(uri, server_api=pymongo.server_api.ServerApi(version="1", strict=True, deprecation_errors=True))
+
+
+@app.on_event("startup")
+async def startup():
+    await client.admin.command("ping")
+    print("MongoDB connected")
+
 
 db = client.steinam
 stunden_collection = db.get_collection("Stundenplan")
@@ -56,6 +60,10 @@ class StundenplanCollection(BaseModel):
     #students: List[StudentModel]
     stundenplan: List[StundenplanModel]
 
+
+@app.get("/")
+async def health():
+    return {"status": "ok"}
 
 
 @app.get(
