@@ -66,6 +66,15 @@ async def health():
     return {"status": "ok"}
 
 
+@app.get("/mongo-health")
+async def mongo_health():
+    try:
+        await client.admin.command("ping")
+        return {"mongodb": "connected"}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
 @app.get(
     "/stundenplan/",
     response_description="List all Stundenplan entries",
