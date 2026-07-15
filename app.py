@@ -28,8 +28,8 @@ async def startup():
 
 db = client.steinam
 stunden_collection = db.get_collection("Stundenplan")
-tagesIndex_collection = db.get_collection("Tagesindex")
-stundenindex_collection = db.get_collection("Stundenindex")
+tageIndex_collection = db.get_collection("TageIndex")
+stundenindex_collection = db.get_collection("StundenIndex")
 
 
 
@@ -50,7 +50,7 @@ class StundenplanModel(BaseModel):
         populate_by_name=True,
         arbitrary_types_allowed=True )
 
-class TagesIndexModel(BaseModel):
+class TageIndexModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias='_id', default=None)
     Monday: str = Field(...)
     Tuesday: str = Field(...)
@@ -75,8 +75,8 @@ class StundenIndexModel(BaseModel):
 class StundenIndexCollection(BaseModel):
     StundenIndex: List[StundenIndexModel]
 
-class TagesIndexCollection(BaseModel):
-    TagesIndex: List[TagesIndexModel]
+class TageIndexCollection(BaseModel):
+    TageIndex: List[TageIndexModel]
 
 class StundenplanCollection(BaseModel):
     """
@@ -115,12 +115,12 @@ async def list_stunden():
 @app.get(
     "/Tageindex/",
     response_description="Get the list of days",
-    response_model=TagesIndexCollection,
+    response_model=TageIndexCollection,
     response_model_by_alias=False,
 )
 
-async def show_Tagesindex():
-    return TagesIndexCollection(tagesindex=await tagesIndex_collection.find().to_list(1000))
+async def show_TageIndex():
+    return TageIndexCollection(tageIndex=await tageIndex_collection.find().to_list(1000))
 
 
 
