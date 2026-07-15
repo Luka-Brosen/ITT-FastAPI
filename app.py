@@ -57,6 +57,9 @@ class TageIndexModel(BaseModel):
     Wednesday: str = Field(...)
     Thursday: str = Field(...)
     Friday: str = Field(...)
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True )
 
 class StundenIndexModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -71,6 +74,9 @@ class StundenIndexModel(BaseModel):
     Lesson_9: str = Field(...)
     Lesson_10: str = Field(...)
     Lesson_11: str = Field(...)
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True )
 
 class StundenIndexCollection(BaseModel):
     StundenIndex: List[StundenIndexModel]
@@ -127,7 +133,7 @@ async def show_TageIndex():
 @app.get(
     "/stundenplan/{id}",
     response_description="Get a single day",
-    response_model=StundenplanModel,
+    response_model=StundenIndexModel,
     response_model_by_alias=False,
 )
 
