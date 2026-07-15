@@ -112,6 +112,16 @@ async def mongo_health():
 async def list_stunden():
     return StundenplanCollection(stundenplan=await stunden_collection.find().to_list(1000))
 
+@app.get(
+    "/Tageindex/",
+    response_description="Get the list of days",
+    response_model=TagesIndexCollection,
+    response_model_by_alias=False,
+)
+
+async def show_Tagesindex(id: str):
+    return TagesIndexCollection(tagesindex=await tagesIndex_collection.find().to_list(1000))
+
 
 
 @app.get(
@@ -126,17 +136,7 @@ async def show_stunden(id: str):
         Stunden := await stunden_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return Stunden
-    raise HTTPException(status_code=404, detail="Stunden {id} not found")
-
-@app.get(
-    "/Tageindex/",
-    response_description="Get the list of days",
-    response_model=TagesIndexModel,
-    response_model_by_alias=False,
-)
-
-async def show_Tagesindex(id: str):
-    return TagesIndexCollection(tagesindex=await tagesIndex_collection.find().to_list(1000))
+    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
 
 @app.get(
     "/Stundenindex/{id}",
@@ -149,4 +149,4 @@ async def show_Stundenindex(id: str):
         StundenIndex := await stundenindex_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return StundenIndex
-    raise HTTPException(status_code=404, detail="Stunden {id} not found")
+    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
