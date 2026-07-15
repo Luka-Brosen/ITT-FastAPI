@@ -28,6 +28,8 @@ async def startup():
 
 db = client.steinam
 stunden_collection = db.get_collection("Stundenplan")
+tagesIndex_collection = db.get_collection("Tagesindex")
+stundenindex_collection = db.get_collection("Stundenindex")
 
 
 
@@ -48,7 +50,33 @@ class StundenplanModel(BaseModel):
         populate_by_name=True,
         arbitrary_types_allowed=True )
 
+class TagesIndexModel(BaseModel):
+    id: Optional[PyObjectId] = Field(alias='_id', default=None)
+    Monday: str = Field(...)
+    Tuesday: str = Field(...)
+    Wednesday: str = Field(...)
+    Thursday: str = Field(...)
+    Friday: str = Field(...)
 
+class StundenIndexModel(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    Lesson_1: str = Field(...)
+    Lesson_2: str = Field(...)
+    Lesson_3: str = Field(...)
+    Lesson_4: str = Field(...)
+    Lesson_5: str = Field(...)
+    Lesson_6: str = Field(...)
+    Lesson_7: str = Field(...)
+    Lesson_8: str = Field(...)
+    Lesson_9: str = Field(...)
+    Lesson_10: str = Field(...)
+    Lesson_11: str = Field(...)
+
+class StundenIndexCollection(BaseModel):
+    StundenIndex: List[StundenIndexModel]
+
+class TagesIndexCollection(BaseModel):
+    TagesIndex: List[TagesIndexModel]
 
 class StundenplanCollection(BaseModel):
     """
@@ -98,4 +126,27 @@ async def show_stunden(id: str):
         Stunden := await stunden_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return Stunden
+    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
+
+@app.get(
+    "/Tageindex/",
+    response_description="Get the list of days",
+    response_model=TagesIndexModel,
+    response_model_by_alias=False,
+)
+
+async def show_Tagesindex(id: str):
+    return TagesIndexCollection(tagesindex=await tagesIndex_collection.find().to_list(1000))
+
+@app.get(
+    "/Stundenindex/{id}",
+    response_description="Get the index of each lesson in a day",
+    response_model=StundenplanModel,
+    response_model_by_alias=False,
+)
+async def show_Stundenindex(id: str):
+    if (
+        StundenIndex := await stundenindex_collection.find_one({"_id": ObjectId(id)})
+    ) is not None:
+        return StundenIndex
     raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
