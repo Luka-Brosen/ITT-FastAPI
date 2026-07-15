@@ -119,7 +119,7 @@ async def list_stunden():
     response_model_by_alias=False,
 )
 
-async def show_Tagesindex(id: str):
+async def show_Tagesindex():
     return TagesIndexCollection(tagesindex=await tagesIndex_collection.find().to_list(1000))
 
 
