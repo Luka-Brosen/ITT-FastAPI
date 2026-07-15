@@ -126,7 +126,7 @@ async def show_stunden(id: str):
         Stunden := await stunden_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return Stunden
-    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
+    raise HTTPException(status_code=404, detail="Stunden {id} not found")
 
 @app.get(
     "/Tageindex/",
@@ -149,4 +149,4 @@ async def show_Stundenindex(id: str):
         StundenIndex := await stundenindex_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return StundenIndex
-    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
+    raise HTTPException(status_code=404, detail="Stunden {id} not found")
