@@ -95,23 +95,9 @@ class StundenplanCollection(BaseModel):
     stundenplan: List[StundenplanModel]
 
 
-@app.get("/")
-async def health():
-    return {"status": "ok"}
-
-
-@app.get("/mongo-health")
-async def mongo_health():
-    try:
-        await client.admin.command("ping")
-        return {"mongodb": "connected"}
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
-
-
 @app.get(
     "/stundenplan/",
-    response_description="List all Stundenplan entries",
+    response_description="Erhalte alle Stundenplan eintraege",
     response_model=StundenplanCollection,
     response_model_by_alias=False,
 )
@@ -120,7 +106,7 @@ async def list_stunden():
 
 @app.get(
     "/Tageindex/",
-    response_description="Get the list of days",
+    response_description="Erhalte eine Liste mit allen Tage IDs",
     response_model=TageIndexCollection,
     response_model_by_alias=False,
 )
@@ -132,7 +118,7 @@ async def show_TageIndex():
 
 @app.get(
     "/stundenplan/{id}",
-    response_description="Get a single day",
+    response_description="erhalte eine einzelne Stunde",
     response_model=StundenIndexModel,
     response_model_by_alias=False,
 )
@@ -142,11 +128,11 @@ async def show_stunden(id: str):
         Stunden := await stunden_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return Stunden
-    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
+    raise HTTPException(status_code=404, detail=f"Stunde {id} wurde nicht gefunden")
 
 @app.get(
     "/Stundenindex/{id}",
-    response_description="Get the index of each lesson in a day",
+    response_description="Erhalte eine Liste, mit allen IDs fuer die Unterrichtsstunden an einem Tag",
     response_model=StundenplanModel,
     response_model_by_alias=False,
 )
@@ -155,4 +141,4 @@ async def show_Stundenindex(id: str):
         StundenIndex := await stundenindex_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return StundenIndex
-    raise HTTPException(status_code=404, detail=f"Stunden {id} not found")
+    raise HTTPException(status_code=404, detail=f"Stunden des Tages {id} wurden nicht gefunden")
